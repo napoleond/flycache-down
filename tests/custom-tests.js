@@ -1,7 +1,7 @@
 'use strict';
 
 var levelup = require('levelup');
-var LocalStorage = require('../lib/localstorage').LocalStorage;
+var FlyCache = require('../lib/flycache').FlyCache;
 
 module.exports.setUp = function (leveldown, test, testCommon) {
   test('setUp common', testCommon.setUp);
@@ -262,8 +262,8 @@ module.exports.all = function (leveldown, tape, testCommon) {
   });
 
   tape('bypasses getItem for keys-only db streams', function (t) {
-    var origGetItem = LocalStorage.prototype.getItem;
-    LocalStorage.prototype.getItem = function () {
+    var origGetItem = FlyCache.prototype.getItem;
+    FlyCache.prototype.getItem = function () {
       throw new Error('shouldn\'t get called for keys-only db streams');
     };
 
@@ -295,7 +295,7 @@ module.exports.all = function (leveldown, tape, testCommon) {
           db.close(function (err) {
             t.notOk(err, 'no error');
             // unhack getItem
-            LocalStorage.prototype.getItem = origGetItem;
+            FlyCache.prototype.getItem = origGetItem;
             t.end();
           });
         });

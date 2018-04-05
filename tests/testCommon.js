@@ -1,6 +1,5 @@
 'use strict';
-
-var storage = require('humble-localstorage');
+var storage = require('../lib/flycache-core');
 
 var dbidx = 0;
 var theLocation = function () {
