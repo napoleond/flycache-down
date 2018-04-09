@@ -22,6 +22,7 @@
     "tiny-queue": "0.2.0"
   },
   "devDependencies": {
+    "@fly/fly": "^0.28.0",
     "browserify": "^4.1.2",
     "es5-shim": "^4.3.1",
     "istanbul": "^0.4.1",
@@ -40,10 +41,9 @@
     "bindings": false
   },
   "scripts": {
-    "test": "npm run jshint && tape tests/*.js",
-    "test-browser": "npm run jshint && zuul --no-coverage tests/*.js",
-    "test-zuul-local": "npm run jshint && zuul --no-coverage --local 9000 tests/*.js",
-    "jshint": "jshint -c .jshintrc lib/*.js tests/*.js",
+    "test": "tape tests/*.js",
+    "test-browser": "zuul --no-coverage tests/*.js",
+    "test-zuul-local": "zuul --no-coverage --local 9000 tests/*.js",
     "coverage": "istanbul cover ./node_modules/.bin/tape tests/*.js && istanbul check-coverage --lines 50 --function 50 --statements 50 --branches 50",
     "report-coverage": "npm run coverage && istanbul-coveralls --no-rm"
   },
