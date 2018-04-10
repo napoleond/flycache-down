@@ -19,51 +19,25 @@
     "d64": "^1.0.0",
     "humble-localstorage": "^1.4.2",
     "inherits": "^2.0.1",
+    "pouchdb": "^6.3.4",
+    "pouchdb-adapter-leveldb-core": "6.3.4",
+    "pouchdb-adapter-localstorage": "^6.3.4",
+    "pouchdb-adapter-memory": "^6.3.4",
     "tiny-queue": "0.2.0"
   },
   "devDependencies": {
-    "@fly/fly": "^0.28.0",
-    "browserify": "^4.1.2",
-    "es5-shim": "^4.3.1",
-    "istanbul": "^0.4.1",
-    "istanbul-coveralls": "^1.0.3",
-    "jshint": "2.8.0",
     "levelup": "^0.18.2",
-    "tape": "^2.12.3",
-    "zuul": "^3.10.1",
-    "zuul-ngrok": "nolanlawson/zuul-ngrok#patch-1"
+    "tape": "^2.12.3"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/no9/localstorage-down.git"
+    "url": "https://github.com/napoleond/flycache-down.git"
   },
   "browser": {
     "bindings": false
   },
   "scripts": {
-    "test": "tape tests/*.js",
-    "test-browser": "zuul --no-coverage tests/*.js",
-    "test-zuul-local": "zuul --no-coverage --local 9000 tests/*.js",
-    "coverage": "istanbul cover ./node_modules/.bin/tape tests/*.js && istanbul check-coverage --lines 50 --function 50 --statements 50 --branches 50",
-    "report-coverage": "npm run coverage && istanbul-coveralls --no-rm"
-  },
-  "testling": {
-    "files": [
-      "tests/test.js"
-    ],
-    "browsers": [
-      "iexplore/8..latest",
-      "chrome/22..latest",
-      "chrome/canary",
-      "firefox/24..latest",
-      "firefox/nightly",
-      "opera/15..latest",
-      "opera/next",
-      "safari/5.0.5..latest",
-      "iphone/latest",
-      "ipad/latest",
-      "android-browser/latest"
-    ]
+    "test": "tape tests/*.js"
   },
   "license": "MIT",
   "gypfile": false,
