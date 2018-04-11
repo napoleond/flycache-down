@@ -1,42 +1,49 @@
 import PouchDB from 'pouchdb';
 import PouchFlyCache from './lib/pouchdb-adapter-flycache';
 //import PouchMemory from 'pouchdb-adapter-memory';
-//import PouchLocalStorage from 'pouchdb-adapter-localstorage';
+
+//hack for pouch logic
+global.navigator = {};
+global.btoa = "TEST";
+global.btoa = function(str) { return Buffer.from(str, 'utf8').toString('base64'); }
+global.atob = function(b64Encoded) {return Buffer.from(b64Encoded, 'base64').toString('utf8');}
+
+
+var onSyncChange = function () {
+  console.log("SYNC CHANGE"); //, arguments);
+}
+var onSyncPaused = function () {
+  console.log("SYNC PAUSE"); //, arguments);
+}
+var onSyncError = function (err) {
+  console.log("SYNC ERRORR",JSON.stringify(err),"test"); //, arguments);
+}
+var onSyncActive = function (err) {
+  console.log("SYNC ACTIVE",err); //, arguments);
+}
+var onSyncDenied = function (err) {
+  console.log("SYNC DENIED",err); //, arguments);
+}
+
+PouchDB.plugin(PouchFlyCache);
+//PouchDB.plugin(PouchMemory);
+//PouchDB.debug.enable('*');
+var url = 'https://ed28c1f6-8a3d-4820-b8be-164d45b93312-bluemix.cloudant.com/fly-test';
+var local = new PouchDB('localFLY', {adapter: 'flycache'});
+//var local = new PouchDB('localMEM', {adapter: 'memory'});
+var remote = new PouchDB(url);
 
 fly.http.respondWith(function(request){
-//  return new Response("Hello! We support whirled peas.", { status: 200});
-///*
-  //PouchDB promises don't seem to work with async/await,
-  //so forcing it a bit
-console.log("A sdkjh",global.setImmediate);
+  //since we're mixing callbacks with promises a bit,
+  //we'll just be explicit about it
   return new Promise(function (resolve, reject) {
-//console.log("B", PouchLocalStorage);
-    //PouchDB.plugin(PouchMemory);
-    PouchDB.plugin(PouchFlyCache);
-    //PouchDB.plugin(PouchLocalStorage);
-PouchDB.debug.enable('*');
-    //var db = new PouchDB('mydb', {adapter: 'memory'});
-    var db = new PouchDB('mydb', {adapter: 'flycache'});
-    //var db = new PouchDB('mydb', {adapter: 'localstorage'});
-console.log("B2",db.adapter);
-    //db.get("POO",function (a,b) { console.log("HEYYYY",a,b); resolve(new Response("Hello! We support whirled peas.", { status: 200})) });
-    //return;
-
-    var l = db.put({
-      _id: 'dave@gmail.com'+Math.random(),
-      name: 'David',
-      age: 69
-    }).then(function () {
-console.log("C");
-      return db.get('dave@gmail.com');
-    }).then(function (doc) {
-console.log("D");
-      resolve(new Response("Hello! We support whirled peas." + JSON.stringify(doc), { status: 200}));
-    }).catch(function (e) {
-console.log("F");
-      reject(e);
-    });
-    console.log("ELL",l.then);
+    // do one way, one-off sync from the server until completion
+    remote.replicate.to(local).on('complete', function(info) {
+      local.get('test_doc').then(function (doc) {
+        resolve(new Response("Hello! We support whirled peas." + JSON.stringify(doc), { status: 200}));
+      }).catch(function (e) {
+        reject(e);
+      });
+    }).on('error', onSyncError).on('change', onSyncChange).on('paused', onSyncPaused).on('active', onSyncActive).on('denied', onSyncDenied);
   });
-//*/
 });
